@@ -44,7 +44,7 @@ My project includes the following files:
 #### 2. Submission includes functional code
 Using the Udacity provided simulator and my drive.py file, the car can be driven autonomously around the track by executing 
 ```sh
-python drive.py models/model.h5
+python drive.py model.h5
 ```
 
 #### 3. Submission code is usable and readable
@@ -62,9 +62,14 @@ My model is based on NVIDIA network which has a good performance on training sel
 
 In order to gauge how well the model was working, I split my image and steering angle data into a training and validation set. I found that my first model had a low mean squared error on the training set but a high mean squared error on the validation set. This implied that the model was overfitting. 
 
-To combat the overfitting, I add Dropout layers after the each convolutional layer and some fully connected layers. 
+To combat the overfitting, I add two Dropout layers only after the fully connected layers. 
 
-In the data preprocessing step, I normalize the image by dividing each element by 255 and substracting 0.5 to shift the element mean down from 0.5 to 0. Then, I crop the image and output 65x320x3 images which only focus on the road rather than other unnecessary parts of the image. 
+First, I converted the images to RGB after loading the images so that the model won't be confused to evaluate RGB images.
+
+Then, I normalize the image by dividing each element by 255 and substracting 0.5 to shift the element mean down from 0.5 to 0. Then, I crop the image and output 65x320x3 images which only focus on the road rather than other unnecessary parts of the image. 
+
+
+
 My final model consists of three convolution layer with 5x5 filter size and two convolution layer with 3x3 filter size, following ELU activation layers which tend to converge cost to zero faster and produce more accurate results. 
 
 The model was trained and validated on different data sets by shuffling to ensure that the model was not overfitting. 
@@ -83,19 +88,14 @@ The final model architecture (model.py lines 67-89) consisted of a convolution n
 | Cropping2D					|	Crop the image, output 65x320x3 image										|
 | Convolution 5x5     	| 2x2 stride, same padding, outputs 31x158x24				|
 | ELU					|												|
-| SpatialDropout2D					|	Probability 0.2											|
 | Convolution 5x5	    | 2x2 stride, same padding, outputs 14x77x36								|
 | ELU					|												|
-| SpatialDropout2D					|	Probability 0.2											|
 | Convolution 5x5      	| 2x2 stride, same padding, outputs 5x37x48 |
 | ELU					|												|
-| SpatialDropout2D					|	Probability 0.2											|
 | Convolution 3x3	    | 1x1 stride, same padding, outputs 3x35x64								|
 | ELU					|												|
-| SpatialDropout2D					|	Probability 0.2											|
 | Convolution 3x3	    | 1x1 stride, same padding, outputs 1x35x64								|
 | ELU					|												|
-| SpatialDropout2D					|	Probability 0.2											|
 | Flatten		| outputs 2112 
 | Dropout					|	Probability 0.5											|
 | Fully connected		| outputs 100 
@@ -147,7 +147,7 @@ Flipped Image:
 
 I finally randomly shuffled the data set and put 20% of the data into a validation set. 
 
-I used this training data for training the model. The validation set helped determine if the model was over or under fitting. I also used checkpoint to save the model after each epoch and save the best model with least validation loss.
+I used this training data for training the model. The validation set helped determine if the model was over or under fitting. I also used checkpoint to save the model after each epoch and save the best model with least validation loss. 
 
 I used an adam optimizer with 0.001 learning rate since the default learning rate 0.01 is not good enough for training the model.
 
@@ -156,13 +156,7 @@ I used an adam optimizer with 0.001 learning rate since the default learning rat
 
 ![alt text][image6]
 
+By recording all the checkpoints and save the best model, I got a model with lowest validation loss of 0.01207. In the video, the vehicle could drive on the road in track 1. However, it needs improvements on some sharp corners to keep the vehicle in the center of the road.
 
-Last time, my model was in struggle at the sand corner and I ask a lot of questions to recover the problem. 
-
-The reviewer suggests me to set more epochs and enlarge the bach size to get a better model. It did imporve the performance but training process with larger batch size and more epochs really needs a long time. I borrowed my college's super computer to train the model and it took me 10 hours to train one model... 
-
-I also tried to add dropout layers to overcome the overfitting problem. And it turns out that only when I added some dropout layers after convolutional layers, the validation loss could drop from 0.014 to 0.011. 
-
-Among all my trained models, the best model has final validation loss of 0.01067. The video.mp4 is the test video of this model. It finally overcome the sand corner. However, it has difficulty on making a sharp right turn. 
 
 Thanks for reviewing!
